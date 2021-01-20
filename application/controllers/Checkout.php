@@ -8,7 +8,7 @@ class Checkout extends CI_Controller
         parent::__construct();
         is_logged_in();
 
-        $this->load->model('API_Model', 'api');
+        $this->load->model('API_model', 'api');
     }
 
     public function index()
