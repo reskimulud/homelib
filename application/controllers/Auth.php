@@ -182,7 +182,7 @@ class Auth extends CI_Controller
                 'email'             => htmlspecialchars($this->input->POST('email', true)),
                 'role_id'           => 2,
                 'password'          => password_hash($this->input->POST('password1'), PASSWORD_DEFAULT),
-                'address'           => htmlspecialchars($this->input->POST('address', true)),
+                'address_id'        => htmlspecialchars($this->input->POST('address', true)),
                 'profession'        => htmlspecialchars($this->input->POST('profession', true)),
                 'is_active'         => 1,
                 'date_registered'   => time()
