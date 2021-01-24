@@ -275,4 +275,65 @@ class Admin extends CI_Controller
       redirect('admin/userslist');
     }
   }
+
+  public function notification($href, $id)
+  {
+    $notification =  $this->db->get_where('notification', ['id' => $id])->row_array();
+    if ($notification) {
+      $this->database->update(['is_seen' => 1], $id, 'notification');
+      $redirect = urldecode(str_replace('_', '=',  base64_decode($href)));
+      redirect($redirect);
+    } else {
+      $this->session->set_flashdata(
+        'error',
+        'Notifikasi tidak ditemukan'
+      );
+      redirect('admin');
+    }
+  }
+
+  public function notifikasi()
+  {
+    $data['title'] = 'Notifikasi';
+    $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+    $this->db->where('target', 'admin');
+    $this->db->update('notification', ['is_seen' => 1]);
+
+    $data['notifications'] = $this->database->adminNotification();
+
+    $this->load->view('template/header', $data);
+    $this->load->view('template/sidebar', $data);
+    $this->load->view('template/topbar', $data);
+    $this->load->view('backend/admin/notification', $data);
+    $this->load->view('template/footer');
+  }
+
+  public function deletenotif($id)
+  {
+    if ($id != '') {
+      $notification = $this->db->get_where('notification', ['id' => $id])->row_array();
+      if ($notification) {
+        $this->database->delete($id, 'notification');
+        $this->session->set_flashdata(
+          'message',
+          'Notifikasi dihapus'
+        );
+        redirect('admin/notifikasi');
+      } else {
+        $this->sesson->set_flashdata(
+          'error',
+          'NOtifikasi tidak ditemukan'
+        );
+        redirect('admin/notifikasi');
+      }
+    } else {
+      $this->session->set_flashdata(
+        'error',
+        'Notifikasi tidak ditemukan'
+      );
+      redirect('admin/notifikasi');
+    }
+  }
+
 }

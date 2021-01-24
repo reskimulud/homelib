@@ -53,7 +53,7 @@
                             </thead>
                             <tbody align="center">
                                 <?php $i = 1; ?>
-                                <?php foreach ($confirms as $confirm) : ?>
+                                <?php foreach (array_reverse($confirms) as $confirm) : ?>
                                 <tr>
                                     <th class="align-middle" scope="row"><?= $i; ?></th>
                                     <td class="align-middle">

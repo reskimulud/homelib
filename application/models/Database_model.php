@@ -224,4 +224,44 @@ class Database_model extends CI_Model
                     ";
         return $this->db->query($query)->result_array();
     }
+
+    public function queryDetailInvoice($id)
+    {
+        $query      = "SELECT `transaction_invoice`.*, `transaction`.`product`, `transaction`.`shipping_address`, `transaction`.`transaction_number`, `transaction`.`total_fee`, `user`.`name`, `user`.`email`, `user`.`phone`, `product_payment_method`.`method`, `product_payment_method`.`icon`, `product_payment_method`.`account_holder`, `product_payment_method`.`number`
+                         FROM `transaction_invoice` JOIN `transaction` JOIN `user` JOIN `product_payment_method`
+                           ON `transaction_invoice`.`transaction_id`    = `transaction`.`id`
+                          AND `transaction_invoice`.`order_by`          = `user`.`id`
+                          AND `transaction`.`method_id` = `product_payment_method`.`id`   
+                        WHERE `transaction_invoice`.`id`                = $id";
+        return $this->db->query($query)->row_array();
+    }
+
+    public function userNotification()
+    {
+        $user = $this->getUser();
+        $this->db->order_by('date_created', 'DESC');
+        return $this->db->get_where('notification', ['target' => $user['id'] ])->result_array();
+    }
+
+    public function adminNotification()
+    {
+        $this->db->order_by('date_created', 'DESC');
+        return $this->db->get_where('notification', ['target' => 'admin'])->result_array();
+    }
+
+    public function getCartByUser()
+    {
+        $user = $this->getUser();
+        $carts      = $this->getAll('user_cart');
+        $products   = [];
+
+        foreach ($carts as $key => $value) {
+            if ($value['user_id'] == $user['id']) {
+                $products[$key] = $this->database->getProductById($value['product_id']);
+                $products[$key]['cart'] = $value;
+            }
+        }
+
+        return $products;
+    }
 }

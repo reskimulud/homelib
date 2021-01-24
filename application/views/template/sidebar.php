@@ -53,6 +53,17 @@
                         $countPending += 1;
                     }
                 }
+
+                $countConfirm = 0;
+                $confirms = $this->db->get('transaction_confirm')->result_array();
+
+                foreach ($confirms as $confirm) {
+                    if ($confirm['is_confirmed'] == 0) {
+                        $countConfirm += 1;
+                    }
+                }
+
+                $countTransaction = $countConfirm + $countPending;
                 
                 ?>
 
@@ -68,7 +79,7 @@
                             <i class="right fas fa-angle-left"></i>
                             <?php if ($m['menu'] == 'Transaksi') : ?>
                             <span
-                                class="right badge badge-danger"><?= ($countPending) ? $countPending  . 'pending': ''; ?></span>
+                                class="right badge badge-danger"><?= ($countTransaction) ? $countTransaction: ''; ?></span>
                             <?php endif; ?>
                         </p>
                     </a>
@@ -96,6 +107,10 @@
                                     <?php if ($sm['title'] == 'Transaksi') : ?>
                                     <span
                                         class="right badge badge-danger"><?= ($countPending) ? $countPending : ''; ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($sm['title'] == 'Konfirmasi Pembayaran') : ?>
+                                    <span
+                                        class="right badge badge-danger"><?= ($countConfirm) ? $countConfirm : ''; ?></span>
                                     <?php endif; ?>
                                 </p>
                             </a>

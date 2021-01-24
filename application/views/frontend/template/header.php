@@ -4,12 +4,22 @@
 <?php
 
 $webInfo    = web_info();
+$notifications = $this->database->userNotification();
+
+$count = 0;
+
+foreach ($notifications as $notification) {
+    if ($notification['is_seen'] == 0) {
+        $count += 1;
+    }
+}
 
 ?>
 
 <head>
     <meta charset="utf-8" />
-    <title><?= (isset($title)) ? $title . ' | ' : ''; ?><?= $webInfo['name']; ?></title>
+    <title><?= ($count > 0) ? "($count)" : ''; ?> <?= (isset($title)) ? $title . ' | ' : ''; ?><?= $webInfo['name']; ?>
+    </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?= $webInfo['description']; ?>" />
     <meta name="keywords" content="<?= $webInfo['keyword']; ?>" />
@@ -33,7 +43,18 @@ $webInfo    = web_info();
     <link rel="stylesheet" href="<?= base_url('assets/'); ?>css/frontend/plugins/jquery-ui.css">
     <link rel="stylesheet" href="<?= base_url('assets/'); ?>css/frontend/style.css">
 
+    <!-- Croppie -->
+    <link rel="stylesheet" href="<?= base_url('assets/'); ?>plugins/croppie/croppie.css">
+
+    <link rel="stylesheet" href="<?= base_url('assets/'); ?>plugins/toastr/toastr.min.css">
+
     <link rel="stylesheet" href="<?= base_url('assets/'); ?>css/select2.min.css">
+
+    <style>
+    .dropdown-toggle::after {
+        display: none !important;
+    }
+    </style>
 
 </head>
 

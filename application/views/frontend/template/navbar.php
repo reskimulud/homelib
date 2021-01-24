@@ -1,5 +1,18 @@
 <div class="main-wrapper">
-    <?php $webInfo = web_info(); ?>
+    <?php 
+    
+    $webInfo = web_info(); 
+    $notifications = $this->database->userNotification();
+
+    $count = 0;
+
+    foreach ($notifications as $notification) {
+        if ($notification['is_seen'] == 0) {
+            $count += 1;
+        }
+    }
+
+    ?>
     <header class="header-area">
         <div class="header-large-device section-padding-2">
             <div class="header-top header-top-ptb-3 bg-black">
@@ -39,7 +52,8 @@
                         <div class="row align-items-center">
                             <div class="col-xl-3 col-lg-2">
                                 <div class="logo">
-                                    <a href="index.html"><img src="assets/images/logo/logo.png" alt="logo"></a>
+                                    <a href="<?= base_url(); ?>"><img
+                                            src="<?= base_url('assets/'); ?>images/logo/logo.png" alt="logo"></a>
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-7">
@@ -47,8 +61,10 @@
                                     class="main-menu main-menu-padding-1 main-menu-lh-3 main-menu-hm4 main-menu-center">
                                     <nav>
                                         <ul>
-                                            <li><a class="active" href="<?= base_url(); ?>">HOME </a></li>
-                                            <li><a href="<?= base_url('katalog'); ?>">KATALOG BUKU </a></li>
+                                            <li><a class="<?= ($this->uri->segment(1) == NULL) ? 'active' : ''; ?>"
+                                                    href="<?= base_url(); ?>">HOME </a></li>
+                                            <li><a class="<?= ($this->uri->segment(1) == 'katalog') ? 'active' : ''; ?>"
+                                                    href="<?= base_url('katalog'); ?>">KATALOG BUKU </a></li>
                                             <li><a href="contact.html">CONTACT </a></li>
                                         </ul>
                                     </nav>
@@ -68,13 +84,54 @@
                                             </form>
                                         </div>
                                     </div>
+
+                                    <?php $carts = $this->database->getCartByUser() ?>
                                     <?php if ($this->session->userdata('email')) : ?>
 
-                                    <div class="same-style-2 same-style-2-font-inc">
-                                        <a class="active d-flex align-content-around" href="<?= base_url('user'); ?>">
+                                    <div class="same-style-2 same-style-2-font-inc dropdown">
+                                        <a class="active d-flex align-content-around dropdown-toggle" href=""
+                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
                                             <p class="d-inline mr-2">
                                                 <?= $user['username']; ?></p><i class="icon-user"></i>
                                         </a>
+                                        <div class="dropdown-menu text-small" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="<?= base_url('user'); ?>">Profile</a>
+                                            <a class="dropdown-item" href="<?= base_url('user/edit'); ?>">Edit
+                                                Profile</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" data-toggle="modal"
+                                                data-target="#logoutModal">Logout</a>
+                                        </div>
+                                    </div>
+                                    <div class="same-style-2 same-style-2-font-inc dropdown">
+                                        <a class="active d-flex align-content-around dropdown-toggle" href=""
+                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                            <i class="icon-bell"></i>
+                                            <?php if ($count > 0) : ?>
+                                            <span class="pro-count black"><?= $count; ?></span>
+                                            <?php endif; ?>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right text-small"
+                                            aria-labelledby="dropdownMenuButton">
+
+                                            <div class="dropdown-divider"></div>
+                                            <?php foreach ($notifications as $notification) : ?>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <a href="<?= base_url($notification['href']); ?>"
+                                                        class="dropdown-item notification-item">
+                                                        <div class="col">
+                                                            <p><b><?= $notification['title']; ?></b></p>
+                                                            <p><?= $notification['body']; ?></p>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="dropdown-divider"></div>
+                                            <?php endforeach; ?>
+                                        </div>
                                     </div>
                                     <div class="same-style-2 same-style-2-font-inc">
                                         <a href="<?= base_url('user/wishlist'); ?>"><i class="icon-heart"></i><span
@@ -82,7 +139,8 @@
                                     </div>
                                     <div class="same-style-2 same-style-2-font-inc header-cart">
                                         <a class="cart-active" href="#">
-                                            <i class="icon-basket-loaded"></i><span class="pro-count black">02</span>
+                                            <i class="icon-basket-loaded"></i><span class="pro-count black count-cart"
+                                                id="count-cart"><?= count($carts); ?></span>
                                         </a>
                                     </div>
                                     <?php else : ?>
@@ -103,7 +161,7 @@
                 <div class="row align-items-center">
                     <div class="col-5">
                         <div class="mobile-logo">
-                            <a href="index.html">
+                            <a href="<?= base_url(); ?>">
                                 <img alt="" src="<?= base_url('assets/'); ?>images/logo/logo.png">
                             </a>
                         </div>
@@ -111,11 +169,46 @@
                     <div class="col-7">
                         <div class="header-action header-action-flex">
                             <?php if ($this->session->userdata('email')) : ?>
-                            <div class="same-style-2 same-style-2-font-inc">
-                                <a class="active d-flex align-content-around" href="<?= base_url('user'); ?>">
+                            <div class="same-style-2 same-style-2-font-inc dropdown">
+                                <a class="active d-flex align-content-around dropdown-toggle" href=""
+                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
                                     <p class="d-inline mr-2">
                                         <?= $user['username']; ?></p><i class="icon-user"></i>
                                 </a>
+                                <div class="dropdown-menu text-small" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="<?= base_url('user'); ?>">Profile</a>
+                                    <a class="dropdown-item" href="<?= base_url('user/edit'); ?>">Edit
+                                        Profile</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" data-toggle="modal" data-target="#logoutModal">Logout</a>
+                                </div>
+                            </div>
+                            <div class="same-style-2 same-style-2-font-inc dropdown">
+                                <a class="active d-flex align-content-around dropdown-toggle" href=""
+                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <i class="icon-bell"></i>
+                                    <?php if ($count > 0) : ?>
+                                    <span class="pro-count black"><?= $count; ?></span>
+                                    <?php endif; ?>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right text-small"
+                                    aria-labelledby="dropdownMenuButton">
+
+                                    <div class="dropdown-divider"></div>
+                                    <?php foreach ($notifications as $notification) : ?>
+                                    <div class="row dropdown-item">
+                                        <div class="col">
+                                            <a href="<?= base_url($notification['href']); ?>" class="notification-item">
+                                                <p><b><?= $notification['title']; ?></b></p>
+                                                <p class="text-wrap"><?= $notification['body']; ?></p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
                             <div class="same-style-2 same-style-2-font-inc">
                                 <a href="<?= base_url('user/wishlist'); ?>"><i class="icon-heart"></i><span
@@ -123,7 +216,8 @@
                             </div>
                             <div class="same-style-2 same-style-2-font-inc header-cart">
                                 <a class="cart-active" href="#">
-                                    <i class="icon-basket-loaded"></i><span class="pro-count black">02</span>
+                                    <i class="icon-basket-loaded"></i><span
+                                        class="pro-count black count-cart"><?= count($carts); ?></span>
                                 </a>
                             </div>
                             <div class="same-style-2 main-menu-icon">
@@ -149,7 +243,7 @@
             <a class="sidebar-close"><i class="icon_close"></i></a>
             <div class="mobile-header-content-area">
                 <div class="header-offer-wrap-3 mobile-header-padding-border-4">
-                    <p class="black">Free shipping worldwide for orders over $99 <a href="#">Learn More</a></p>
+                    <p class="black"><?= $webInfo['description']; ?></p>
                 </div>
                 <div class="mobile-search mobile-header-padding-border-1">
                     <form class="search-form" action="#">
@@ -162,54 +256,10 @@
                     <nav>
                         <ul class="mobile-menu">
                             <li class="menu-item-has-children">
-                                <a href="index.html">Home</a>
+                                <a href="<?= base_url(); ?>">Home</a>
                             </li>
-                            <li class="menu-item-has-children "><a href="#">shop</a>
-                                <ul class="dropdown">
-                                    <li class="menu-item-has-children"><a href="#">shop layout</a>
-                                        <ul class="dropdown">
-                                            <li><a href="shop.html">standard style</a></li>
-                                            <li><a href="shop-list.html">shop list style</a></li>
-                                            <li><a href="shop-fullwide.html">shop fullwide</a></li>
-                                            <li><a href="shop-no-sidebar.html">grid no sidebar</a></li>
-                                            <li><a href="shop-list-no-sidebar.html">list no sidebar</a></li>
-                                            <li><a href="shop-right-sidebar.html">shop right sidebar</a></li>
-                                            <li><a href="store-location.html">store location</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="menu-item-has-children"><a href="#">Products Layout</a>
-                                        <ul class="dropdown">
-                                            <li><a href="product-details.html">tab style 1</a></li>
-                                            <li><a href="product-details-2.html">tab style 2</a></li>
-                                            <li><a href="product-details-sticky.html">sticky style</a></li>
-                                            <li><a href="product-details-gallery.html">gallery style </a></li>
-                                            <li><a href="product-details-affiliate.html">affiliate style</a></li>
-                                            <li><a href="product-details-group.html">group style</a></li>
-                                            <li><a href="product-details-fixed-img.html">fixed image style </a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="menu-item-has-children"><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="about-us.html">about us </a></li>
-                                    <li><a href="cart.html">cart page</a></li>
-                                    <li><a href="checkout.html">checkout </a></li>
-                                    <li><a href="my-account.html">my account</a></li>
-                                    <li><a href="wishlist.html">wishlist </a></li>
-                                    <li><a href="compare.html">compare </a></li>
-                                    <li><a href="contact.html">contact us </a></li>
-                                    <li><a href="order-tracking.html">order tracking</a></li>
-                                    <li><a href="login-register.html">login / register </a></li>
-                                </ul>
-                            </li>
-                            <li class="menu-item-has-children "><a href="#">Blog</a>
-                                <ul class="dropdown">
-                                    <li><a href="blog.html">blog standard </a></li>
-                                    <li><a href="blog-no-sidebar.html">blog no sidebar </a></li>
-                                    <li><a href="blog-right-sidebar.html">blog right sidebar</a></li>
-                                    <li><a href="blog-details.html">blog details</a></li>
-                                </ul>
+                            <li class="menu-item-has-children">
+                                <a href="<?= base_url('katalog'); ?>">Katalog Buku</a>
                             </li>
                             <li><a href="contact.html">Contact us</a></li>
                         </ul>
@@ -238,39 +288,73 @@
         <div class="sidebar-cart-all">
             <a class="cart-close" href="#"><i class="icon_close"></i></a>
             <div class="cart-content">
-                <h3>Shopping Cart</h3>
+                <h3>Keranjang Belanja</h3>
                 <ul>
+                    <?php 
+                                
+                    $total = 0;
+                    $productJSON = [];
+                    $idCart = [];
+                    $i = 0;
+                    
+                    ?>
+
+                    <?php $total = 0 ?>
+                    <?php foreach ($carts as $cart) : ?>
                     <li class="single-product-cart">
                         <div class="cart-img">
-                            <a href="#"><img src="assets/images/cart/cart-1.jpg" alt=""></a>
+                            <a href="<?= base_url('katalog/detailproduk/' . $cart['id']); ?>"><img
+                                    src="<?= base_url('assets/img/product_thumb/small/' . $cart['thumb']); ?>" alt=""
+                                    width="50px"></a>
                         </div>
                         <div class="cart-title">
-                            <h4><a href="#">Simple Black T-Shirt</a></h4>
-                            <span> 1 × $49.00 </span>
+                            <h4><a
+                                    href="<?= base_url('katalog/detailproduk/' . $cart['id']); ?>"><?= $cart['title']; ?></a>
+                            </h4>
+                            <span> <?= $cart['cart']['qty']; ?> × Rp. <?= number_format($cart['price'], 0, ',', '.'); ?>
+                            </span>
                         </div>
                         <div class="cart-delete">
-                            <a href="#">×</a>
+                            <a href="<?= base_url('user/deleteCart/' . $cart['cart']['rowid']); ?>">×</a>
                         </div>
                     </li>
-                    <li class="single-product-cart">
-                        <div class="cart-img">
-                            <a href="#"><img src="assets/images/cart/cart-2.jpg" alt=""></a>
-                        </div>
-                        <div class="cart-title">
-                            <h4><a href="#">Norda Backpack</a></h4>
-                            <span> 1 × $49.00 </span>
-                        </div>
-                        <div class="cart-delete">
-                            <a href="#">×</a>
-                        </div>
-                    </li>
+                    <?php 
+                    
+                    $total += $cart['price'] * $cart['cart']['qty'];
+                    
+                    $qty    = $cart['cart']['qty'];
+                    $productJSON[$i]['product_id']  = $cart['id'];
+                    $productJSON[$i]['qty']         = "$qty";
+
+                    $idCart[$i] = $cart['cart']['rowid'];
+                    
+                    $i++;
+                    ?>
+                    <?php endforeach; ?>
+
                 </ul>
                 <div class="cart-total">
-                    <h4>Subtotal: <span>$170.00</span></h4>
+                    <h4>Total: <span>Rp. <?= number_format($total, 0, ',', '.'); ?></span></h4>
                 </div>
                 <div class="cart-checkout-btn">
                     <a class="btn-hover cart-btn-style" href="<?= base_url('user/cart'); ?>">view cart</a>
-                    <a class="no-mrg btn-hover cart-btn-style" href="checkout.html">checkout</a>
+
+                    <?php 
+
+                    $json   = json_encode($productJSON);
+                    $json   = base64_encode($json);
+                    $json   = str_replace('=', '_', $json);
+                    $json   = urlencode($json);
+
+                    $idCart   = json_encode($idCart);
+                    $idCart   = base64_encode($idCart);
+                    $idCart   = str_replace('=', '_', $idCart);
+                    $idCart   = urlencode($idCart);
+                    
+                    ?>
+
+                    <a class="no-mrg btn-hover cart-btn-style"
+                        href="<?= base_url('checkout?idC=' . $idCart . '&p=' . $json) ?>">checkout</a>
                 </div>
             </div>
         </div>

@@ -10,7 +10,7 @@ class Transaksi extends CI_Controller
         parent::__construct();
         is_logged_in();
 
-        // $this->load->model('Pagination_model', 'page');
+        $this->load->model('Notification_model', 'notif');
     }
 
     public function index()
@@ -122,20 +122,9 @@ class Transaksi extends CI_Controller
         return $this->database->save($data, 'transaction_invoice');
     }
 
-    public function queryDetailInvoice($id)
-    {
-        $query      = "SELECT `transaction_invoice`.*, `transaction`.`product`, `transaction`.`shipping_address`, `transaction`.`transaction_number`, `transaction`.`total_fee`, `user`.`name`, `user`.`email`, `user`.`phone`, `product_payment_method`.`method`, `product_payment_method`.`icon`, `product_payment_method`.`account_holder`, `product_payment_method`.`number`
-                         FROM `transaction_invoice` JOIN `transaction` JOIN `user` JOIN `product_payment_method`
-                           ON `transaction_invoice`.`transaction_id`    = `transaction`.`id`
-                          AND `transaction_invoice`.`order_by`          = `user`.`id`
-                          AND `transaction`.`method_id` = `product_payment_method`.`id`   
-                        WHERE `transaction_invoice`.`id`                = $id";
-        return $this->db->query($query)->row_array();
-    }
-
     public function detail_invoice($id)
     {
-        $detailInvoice  = $this->queryDetailInvoice($id);
+        $detailInvoice  = $this->database->queryDetailInvoice($id);
 
         if ($detailInvoice) {
             $data['title']      = 'Detail Invoice #' . $detailInvoice['invoice_number'];
@@ -162,7 +151,7 @@ class Transaksi extends CI_Controller
 
     public function print_invoice($id)
     {
-        $detailInvoice  = $this->queryDetailInvoice($id);
+        $detailInvoice  = $this->database->queryDetailInvoice($id);
 
         if ($detailInvoice) {
             $data['title']      = 'Detail Invoice' . $detailInvoice['invoice_number'];
@@ -225,6 +214,25 @@ class Transaksi extends CI_Controller
             $this->database->update(['is_confirmed' => 1], $confirm['id'], 'transaction_confirm');
 
             $invoice = $this->buaatInvoice($transaction['transaction_number'], $transaction['id'], $transaction['user_id']);
+
+            $products = json_decode($transaction['product'], TRUE);
+
+                foreach ($products as $prod) {
+                    $product = $this->database->getProductById($prod['product_id']);
+
+                    if ($product) {
+                        $this->db->where('id', $product['id']);
+                        $this->db->update('product', ['sold' => $product['sold'] + 1]);
+                    }
+                }
+
+            $target = $transaction['user_id'];
+            $title  = 'Pesanan sedang diproses';
+            $icon   = base_url('favicon.ico');
+            $body   = "Permintaan anda untuk pesanan #$transaction_number telah dikonfirmasi dan sedang diproses";
+            $href   = 'user/notification';
+
+            $this->notif->notification($target, $title, $icon, $body, $href);
 
             if ($invoice) {
                 $invoice_number = 'INV' . $transaction['transaction_number'];

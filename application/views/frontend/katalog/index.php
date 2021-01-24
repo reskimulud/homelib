@@ -86,7 +86,9 @@
                                                 <span>RP. <?= number_format($product['price'], 0, ',', '.'); ?></span>
                                             </div>
                                             <div class="pro-add-to-cart">
-                                                <button title="Add to Cart">Tambah ke Keranjang</button>
+                                                <button title="Add to Cart" onclick="addToCart(<?= $product['id']; ?>)"
+                                                    class="addToCart">Tambah ke
+                                                    Keranjang</button>
                                             </div>
                                         </div>
                                     </div>
@@ -136,7 +138,8 @@
                                             </div>
                                             <p><?= $product['product_desc']; ?></p>
                                             <div class="product-list-action">
-                                                <button title="Add To Cart"><i class="icon-basket-loaded"></i></button>
+                                                <button title="Add To Cart" onclick="addToCart(<?= $product['id']; ?>)"
+                                                    class="addToCart"><i class="icon-basket-loaded"></i></button>
                                                 <button title="Wishlist"><i class="icon-heart"></i></button>
                                             </div>
                                         </div>
@@ -225,7 +228,9 @@
                             </div>
                             <div class="pro-details-action-wrap">
                                 <div class="pro-details-add-to-cart">
-                                    <a title="Add to Cart" href="#">Tambah ke Keranjang</a>
+                                    <a title="Add to Cart" onclick="addToCart(<?= $product['id']; ?>)" class="addToCart"
+                                        href="#">Tambah ke
+                                        Keranjang</a>
                                 </div>
                                 <div class="pro-details-action">
                                     <a title="Add to Wishlist" href="#"><i class="icon-heart"></i></a>

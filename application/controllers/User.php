@@ -202,6 +202,71 @@ class User extends CI_Controller
         }
     }
 
+    public function print_invoice($id)
+    {
+        $detailInvoice  = $this->database->queryDetailInvoice($id);
+
+        if ($detailInvoice) {
+            $data['title']      = 'Detail Invoice' . $detailInvoice['invoice_number'];
+            $data['user']       = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+            $data['detail']     = $detailInvoice;
+            $data['products']   = json_decode($detailInvoice['product']);
+            
+            $this->load->view('backend/transaction/print_invoice', $data);
+
+        } else {
+            $this->session->set_flashdata(
+                'error',
+                'Invoice tidak ditemukan'
+            );
+            redirect('transaksi/invoice');
+        }
+
+        
+    }
+
+    public function addToCart($product_id)
+    {
+        $user       = $this->database->getUser();
+        $product    = $this->database->getProductById($product_id);
+        $user_id    = $user['id'];
+
+        $data   = [
+            'id'            => "$product_id-and-$user_id",
+            'user_id'       => $user_id,
+            'product_id'    => $product_id,
+            'qty'           => 1,
+            'price'         => $product['price'],
+            'name'          => $product_id,
+        ];
+
+        $saveToCart = $this->cart->insert($data);
+
+        if ($saveToCart) {
+            $carts = $this->cart->contents();
+
+            foreach ($carts as $cart) {
+                $dbCart = $this->db->get_where('user_cart', ['id' => $cart['id']])->row_array();
+
+                if ($dbCart) {
+                    $qty  = $dbCart['qty'];
+                    $this->database->update(['qty' => $qty + $cart['qty']], $cart['id'], 'user_cart');
+                    $this->cart->destroy();
+
+                    $product = $this->database->getProductById($dbCart['product_id']);
+
+                    if ($product) {
+                        $this->database->update(['add_to_cart' => $product['add_to_cart'] + 1], $product['id'], 'product');
+                    }
+
+                } else {
+                    $this->database->save($cart, 'user_cart');
+                    $this->cart->destroy();
+                }
+            }
+        }
+    }
+
     public function wishlist()
     {
         $data['title']  = 'Wishlist';
@@ -215,13 +280,106 @@ class User extends CI_Controller
 
     public function cart()
     {
-        $data['title']  = 'Wishlist';
+        $data['title']  = 'Keranjang Belanja';
         $data['user']   = $this->database->getUser();
+
+        $data['products'] = $this->database->getCartByUser();
 
         $this->load->view('frontend/template/header', $data);
         $this->load->view('frontend/template/navbar', $data);
         $this->load->view('frontend/user/cart', $data);
         $this->load->view('frontend/template/footer');
+    }
+
+    public function deleteCart($rowid)
+    {
+        if ($rowid == '') {
+            $this->session->set_flashdata(
+                'error',
+                'Produk tidak ditemukan'
+            );
+            redirect('user/cart');
+        } else {
+            $product = $this->db->get_where('user_cart', ['rowid' => $rowid])->row_array();
+
+            if ($product) {
+                $this->db->where('rowid', $rowid);
+                $this->db->delete('user_cart');
+
+                $this->session->set_flashdata(
+                    'message',
+                    'Produk dihapus dari keranjang'
+                );
+                redirect('user/cart');
+            }
+        }
+    }
+
+    public function clearCart($user_id)
+    {
+        if ($user_id == '') {
+            $this->session->set_flashdata(
+                'error',
+                'Produk tidak ditemukan'
+            );
+            redirect('user/cart');
+        } else {
+            $product = $this->db->get_where('user_cart', ['user_id' => $user_id])->row_array();
+
+            if ($product) {
+                $this->db->where('user_id', $user_id);
+                $this->db->delete('user_cart');
+
+                $this->session->set_flashdata(
+                    'message',
+                    'Keranjang dibersihkan'
+                );
+                redirect('user/cart');
+            }
+        }
+    }
+
+    public function notification()
+    {
+        $data['title'] = 'Notifikasi';
+        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+        $this->db->where('target', $data['user']['id']);
+        $this->db->update('notification', ['is_seen' => 1]);
+
+        $data['notifications'] = $this->database->userNotification();
+
+        $this->load->view('frontend/template/header', $data);
+        $this->load->view('frontend/template/navbar', $data);
+        $this->load->view('frontend/user/notification', $data);
+        $this->load->view('frontend/template/footer');
+    }
+
+    public function deletenotif($id)
+    {
+        if ($id != '') {
+        $notification = $this->db->get_where('notification', ['id' => $id])->row_array();
+        if ($notification) {
+            $this->database->delete($id, 'notification');
+            $this->session->set_flashdata(
+            'message',
+            'Notifikasi dihapus'
+            );
+            redirect('admin/notifikasi');
+        } else {
+            $this->sesson->set_flashdata(
+            'error',
+            'NOtifikasi tidak ditemukan'
+            );
+            redirect('admin/notifikasi');
+        }
+        } else {
+        $this->session->set_flashdata(
+            'error',
+            'Notifikasi tidak ditemukan'
+        );
+        redirect('admin/notifikasi');
+        }
     }
 
 }

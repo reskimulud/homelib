@@ -180,14 +180,14 @@
                                                         <?php endif; ?>
 
                                                         <?php if ($status == 2) : ?>
-                                                        <a href="<?= base_url('transaksi/print_invoice/' . $invoiceID['id']); ?>"
+                                                        <a href="<?= base_url('user/print_invoice/' . $invoiceID['id']); ?>"
                                                             target="_blank">cetak
                                                             invoice</a> | <a href="">hubungi admin</a>
                                                         <?php endif; ?>
 
                                                         <?php if ($status == 3) : ?>
                                                         <a
-                                                            href="<?= base_url('transaksi/print_invoice/' . $transaction['id']); ?>">cetak
+                                                            href="<?= base_url('user/print_invoice/' . $transaction['id']); ?>">cetak
                                                             invoice</a> | <a href="">beri ulasan</a>
                                                         <?php endif; ?>
                                                     </div>

@@ -86,30 +86,71 @@
             </div>
         </li>
         <!-- Notifications Dropdown Menu -->
+
+        <?php 
+        
+        $notifications = $this->database->adminNotification();
+        $count = 0;
+
+        foreach ($notifications as $notification) {
+            if ($notification['is_seen'] == 0) {
+                $count += 1;
+            }
+        }
+        
+        ?>
+
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
                 <i class="far fa-bell"></i>
-                <span class="badge badge-warning navbar-badge">15</span>
+                <span class="badge badge-warning navbar-badge"><?= ($count > 0) ? $count : ''; ?></span>
             </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                <span class="dropdown-item dropdown-header">15 Notifications</span>
+            <div class="dropdown-menu dropdown-menu-xl dropdown-menu-right">
+                <span
+                    class="dropdown-item dropdown-header"><?= ($count > 0) ? $count . ' notifikasi' : 'tidak ada notifikasi terbaru'; ?></span>
                 <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-envelope mr-2"></i> 4 new messages
-                    <span class="float-right text-muted text-sm">3 mins</span>
+                <?php $i = 1; ?>
+                <?php foreach ($notifications as $notification) : ?>
+                <?php if ($i <= 3) : ?>
+                <?php if ($notification['is_seen'] == 0) : ?>
+                <a href="<?= base_url('admin/notification/' . urlencode(str_replace('=', '_', base64_encode($notification['href']))) . '/' . $notification['id']); ?>"
+                    class="dropdown-item notification-item bg-gray-light">
+                    <div class="row">
+                        <div class="col-3 d-flex justify-content-lg-around">
+                            <img src="<?= $notification['icon']; ?>" alt="" height="50px">
+                        </div>
+                        <div class="col-9">
+                            <p><b><?= $notification['title']; ?></b></p>
+                            <p><small><?= $notification['body']; ?></small></p>
+                        </div>
+                    </div>
                 </a>
                 <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-users mr-2"></i> 8 friend requests
-                    <span class="float-right text-muted text-sm">12 hours</span>
+                <?php else : ?>
+                <a href="<?= base_url($notification['href']); ?>" class="dropdown-item notification-item">
+                    <div class="row">
+                        <div class="col-3 d-flex justify-content-lg-around">
+                            <img src="<?= $notification['icon']; ?>" alt="" height="50px">
+                        </div>
+                        <div class="col-9">
+                            <p><b><?= $notification['title']; ?></b></p>
+                            <p><small><?= $notification['body']; ?></small></p>
+                        </div>
+                    </div>
                 </a>
                 <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-file mr-2"></i> 3 new reports
-                    <span class="float-right text-muted text-sm">2 days</span>
+                <?php endif; ?>
+                <?php $i++ ?>
+                <?php endif; ?>
+                <?php endforeach; ?>
+                <a href="<?= base_url('admin/notifikasi'); ?>" class="dropdown-item dropdown-footer">
+                    Lihat semua notifikasi
+
+                    <?php if ($count > 3) : ?>
+                    <span class="badge badge-danger">+<?= $count - 3; ?></span>
+                    <?php endif; ?>
+
                 </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
             </div>
         </li>
         <li class="nav-item">

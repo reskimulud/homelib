@@ -24,7 +24,7 @@ class API_model extends CI_Model
         curl_close($curl);
 
         if ($err) {
-        echo "cURL Error #:" . $err;
+        return  ['error' => "cURL Error #:" . $err];
         } else {
             $response = json_decode($response, TRUE);
 
@@ -54,7 +54,7 @@ class API_model extends CI_Model
         curl_close($curl);
 
         if ($err) {
-            return "cURL Error #:" . $err;
+            return ['error' => "cURL Error #:" . $err];
         } else {
             $response  = json_decode($response, TRUE);
             return $response;

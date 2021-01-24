@@ -1,20 +1,37 @@
 <?php $webInfo = web_info(); ?>
 
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="<?= base_url('auth/logout') ?>">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <footer class="footer-area pb-65 mt-5 pt-4">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 col-md-6">
                 <div class="contact-info-wrap">
                     <div class="footer-logo">
-                        <a href="#"><img src="assets/images/logo/logo.png" alt="logo"></a>
-                    </div>
-                    <div class="single-contact-info">
-                        <span>Alamat Kami</span>
-                        <p><?= $webInfo['address']; ?></p>
+                        <a href="#"><img src="<?= base_url('assets/'); ?>images/logo/logo.png" alt="logo"></a>
                     </div>
                     <div class="single-contact-info">
                         <span>24/7 dapat dihubungi:</span>
                         <p>+62<?= $webInfo['telp']; ?></p>
+                        <p><?= $webInfo['email']; ?></p>
                     </div>
                 </div>
             </div>
@@ -68,6 +85,11 @@
 <script src="<?= base_url('assets/'); ?>js/frontend/plugins/easyzoom.js"></script>
 <script src="<?= base_url('assets/'); ?>js/frontend/plugins/scrollup.js"></script>
 <script src="<?= base_url('assets/'); ?>js/frontend/plugins/ajax-mail.js"></script>
+
+<!-- Croppie Image Crop tool -->
+<script src="<?= base_url('assets/'); ?>plugins/croppie/croppie.min.js"></script>
+
+<script src="<?= base_url('assets/'); ?>plugins/toastr/toastr.min.js"></script>
 
 <!-- Use the minified version files listed below for better performance and remove the files listed above  
 <script src="<?= base_url('assets/'); ?>js/frontend/vendor/vendor.min.js"></script>
@@ -127,10 +149,18 @@ $(document).ready(function() {
         const product = '<?= $json; ?>';
         const shipping_address = $('#shipping_address').text();
         const total_fee = $('#total-fee').html();
+        const idC = $('#idC').html();
 
 
         console.log(product);
         console.log(shipping_address);
+        if (idC) {
+            console.log(idC);
+
+            $('#order-form').prepend("<input type='hidden' name='idC' value='" + idC +
+                "'>");
+
+        }
 
         $('#order-form').prepend("<input type='hidden' name='product' value='" + product +
             "'>");
@@ -145,12 +175,90 @@ $(document).ready(function() {
     });
 });
 
-
 $('.custom-file-input').on('change', function() {
     let fileName = $(this).val().split('\\').pop();
     $(this).next('.custom-file-label').addClass("selected").html(fileName);
 });
 <?php endif; ?>
+
+function addToCart(productID, qty = 1) {
+    const countCart = $('#count-cart').text();
+    console.log(countCart);
+    $('.count-cart').text(Number(countCart) + 1);
+
+    toastr.success("Produk ditambahkan ke keranjang");
+
+    for (i = 0; i < qty; i++) {
+        $.ajax({
+            url: "<?= base_url('user/addToCart/'); ?>" + productID,
+        });
+    }
+
+}
+
+$('#addToCartProduct').on('click', function(e) {
+    const productID = $('#product-id').val();
+    const qtyCart = $('#qtybutton').val();
+
+    addToCart(productID, qtyCart);
+
+    e.product_id();
+});
+
+
+function img() {
+    //croppie image profile
+    $uploadCrop = $("#upload-demo").croppie({
+        enableExif: true,
+        viewport: {
+            width: 200,
+            height: 200,
+            type: "square",
+        },
+        boundary: {
+            width: 300,
+            height: 300,
+        },
+    });
+
+    $("#upload").on("change", function() {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $uploadCrop
+                .croppie("bind", {
+                    url: e.target.result,
+                })
+                .then(function() {
+                    console.log("jQuery bind complete");
+                    $(".upload-result").show();
+                });
+        };
+        reader.readAsDataURL(this.files[0]);
+    });
+
+    $(".upload-result").on("click", function(ev) {
+        $uploadCrop
+            .croppie("result", {
+                type: "canvas",
+                size: "viewport",
+            })
+            .then(function(resp) {
+                $.ajax({
+                    url: "<?php echo base_url(); ?>user/uploadImage",
+                    type: "POST",
+                    data: {
+                        image: resp,
+                    },
+                    success: function(data) {
+                        // html = '<img src="' + resp + '" />';
+                        // $("#upload-demo-i").html(html);
+                        location.replace("<?= base_url('user'); ?>");
+                    }
+                });
+            });
+        $(".save").show();
+    });
+}
 </script>
 
 </body>

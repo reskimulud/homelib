@@ -53,15 +53,6 @@ $webInfo = web_info();
                                     <p class="card-text" id="shipping_address">
                                         <?= $address['address']; ?><br><?= $address['sub_districts']; ?><br><?= $address['city_name']; ?><br><?= $address['postal']; ?>
                                     </p>
-                                    <?php 
-                                    
-                                    $product = base64_encode($encode);
-                                    $product = str_replace('=', '_', $product);
-                                    $product = urlencode($product);
-                                    
-                                    ?>
-                                    <a href="<?= base_url('checkout/address/' . $product); ?>" class="card-link">Ganti
-                                        Alamat</a>
                                 </div>
                             </div>
                         </div>
@@ -130,7 +121,14 @@ $webInfo = web_info();
                                 $postField  = ['origin' => 151, 'destination' => $city_id, 'weight' => $weight, 'courier' => 'jne'];
 
                                 $request    = $this->api->post($url, $postField, $header);
-                                $shipment   = $request['rajaongkir']['results'][0]['costs'][1]['cost'][0]
+                                
+                                if (isset($request['error'])) {
+
+                                    $shipment = ['value' => 20000, 'etd' => '<b class="text-danger">API terputus</b>'];
+                                } else {
+
+                                    $shipment   = $request['rajaongkir']['results'][0]['costs'][1]['cost'][0];
+                                }
                                 
                                 
                                 ?>
@@ -173,6 +171,10 @@ $webInfo = web_info();
                                 </form>
                             </div>
                         </div>
+
+                        <?php if (isset($_GET['idC'])) : ?>
+                        <div id="idC" class="d-none"><?= $_GET['idC']; ?></div>
+                        <?php endif; ?>
 
                         <div class="Place-order" id="place-order">
                             <a href="">Buat Pesanan</a>

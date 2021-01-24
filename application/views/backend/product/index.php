@@ -40,91 +40,119 @@
 
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary"><i class="fa fa-table"></i> Data Produk</h6>
+                            <ul class="nav nav-pills">
+                                <?php $i = 1 ?>
+                                <?php foreach ($categories as $category) : ?>
+                                <li class="nav-item"><a class="nav-link <?= ($i == 1) ? 'active' : ''; ?>"
+                                        href="#category<?= $category['id']; ?>"
+                                        data-toggle="tab"><?= $category['category']; ?></a>
+                                </li>
+                                <?php $i++ ?>
+                                <?php endforeach; ?>
+
+                            </ul>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover table-responsive" id="dataTable" width="100%"
-                                    cellspacing="0">
-                                    <thead align="center">
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Thumbnail</th>
-                                            <th scope="col">Nama Produk</th>
-                                            <th scope="col">Tanggal</th>
-                                            <th scope="col">Ditambahkan</th>
-                                            <th scope="col">Harga</th>
-                                            <th scope="col">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody align="center">
-                                        <?php $i = 1; ?>
-                                        <?php foreach ($products as $product) : ?>
-                                        <tr>
-                                            <th scope="row" class="align-middle"><?= $i; ?></th>
-                                            <td class="align-middle">
-                                                <img width="80px"
-                                                    src="<?= base_url('assets/img/product_thumb/small/') . $product['thumb']; ?>"
-                                                    alt="">
-                                            </td>
-                                            <td class="align-middle"><?= $product['title'] ?></td>
-                                            <td class="align-middle"><?= date('d F Y', $product['date_added']) ?></td>
-                                            <td class="align-middle"><?= $product['name'] ?></td>
-                                            <td class="align-middle">
-                                                Rp. <?= number_format($product['price'], 0, ',', '.') ?></td>
-                                            <td class="align-middle">
-                                                <a href="" class="badge badge-secondary m-1"
-                                                    data-target="#detailProdukModal<?= $product['id']; ?>"
-                                                    data-toggle="modal" data-popup="tooltip" data-placement="top"
-                                                    title="Detail Produk"><i class="fas fa-fw fa-info"></i> detail</a>
-                                                <div class="btn-group">
-                                                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
-                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
-                                                        Aksi
-                                                    </button>
-                                                    <div class="tooltip-demo dropdown-menu">
-                                                        <?php if ($product['thumb'] == 'no_thumb.jpg') : ?>
-                                                        <a href="" class="dropdown-item" data-toggle="modal"
-                                                            data-target="#newThumbModal<?= $product['id']; ?>"
-                                                            data-popup="tooltip" data-placement="top"
-                                                            title="Tambah thumb"><i class=" fas fa-fw fa-plus"></i>
-                                                            thumb
-                                                        </a>
-                                                        <?php else : ?>
-                                                        <a href="" class="dropdown-item" data-toggle="modal"
-                                                            data-target="#newThumbModal<?= $product['id']; ?>"
-                                                            data-popup="tooltip" data-placement="top"
-                                                            title="Edit thumb"><i class=" fas fa-fw fa-edit"></i>
-                                                            edit thumb
-                                                        </a>
-                                                        <a href="<?= base_url('produk/deletethumb/') . $product['id']; ?>"
-                                                            class="dropdown-item del-btn" data-popup="tooltip"
-                                                            data-placement="top" title="Hapus thumb"><i
-                                                                class=" fas fa-fw fa-trash"></i>
-                                                            hapus thumb
-                                                        </a>
-                                                        <?php endif; ?>
-                                                        <div class="dropdown-divider"></div>
-                                                        <a href="" class="dropdown-item " data-toggle="modal"
-                                                            data-target="#editProdukModal<?= $product['id'] ?>"
-                                                            data-popup="tooltip" data-placement="top"
-                                                            title="Edit Data"><i class=" fas fa-fw fa-edit"></i>
-                                                            edit</a>
-                                                        <a href="<?= base_url('produk/deleteproduk/') . $product['id'] ?>"
-                                                            class="dropdown-item fas del-btn" data-popup="tooltip"
-                                                            data-placement="top" title="Delete Data"><i
-                                                                class="fas fa-fw fa-trash-alt"></i>
-                                                            hapus item</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <?php $i++ ?>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
+
+                            <div class="tab-content">
+
+                                <?php $i = 1 ?>
+                                <?php foreach ($categories as $category) : ?>
+                                <div class="tab-pane active" id="category<?= $category['id']; ?>">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-responsive" id="dataTable" width="100%"
+                                            cellspacing="0">
+                                            <thead align="center">
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">Thumbnail</th>
+                                                    <th scope="col">Nama Produk</th>
+                                                    <th scope="col">Tanggal</th>
+                                                    <th scope="col">Ditambahkan</th>
+                                                    <th scope="col">Harga</th>
+                                                    <th scope="col">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody align="center">
+                                                <?php $i = 1; ?>
+                                                <?php foreach ($products as $product) : ?>
+                                                <?php if ($product['category_id'] == $category['id']) : ?>
+                                                <tr>
+                                                    <th scope="row" class="align-middle"><?= $i; ?></th>
+                                                    <td class="align-middle">
+                                                        <img width="80px"
+                                                            src="<?= base_url('assets/img/product_thumb/small/') . $product['thumb']; ?>"
+                                                            alt="">
+                                                    </td>
+                                                    <td class="align-middle"><?= $product['title'] ?></td>
+                                                    <td class="align-middle">
+                                                        <?= date('d F Y', $product['date_added']) ?></td>
+                                                    <td class="align-middle"><?= $product['name'] ?></td>
+                                                    <td class="align-middle">
+                                                        Rp. <?= number_format($product['price'], 0, ',', '.') ?></td>
+                                                    <td class="align-middle">
+                                                        <a href="" class="badge badge-secondary m-1"
+                                                            data-target="#detailProdukModal<?= $product['id']; ?>"
+                                                            data-toggle="modal" data-popup="tooltip"
+                                                            data-placement="top" title="Detail Produk"><i
+                                                                class="fas fa-fw fa-info"></i> detail</a>
+                                                        <div class="btn-group">
+                                                            <button class="btn btn-primary btn-sm dropdown-toggle"
+                                                                type="button" data-toggle="dropdown"
+                                                                aria-haspopup="true" aria-expanded="false">
+                                                                Aksi
+                                                            </button>
+                                                            <div class="tooltip-demo dropdown-menu">
+                                                                <?php if ($product['thumb'] == 'no_thumb.jpg') : ?>
+                                                                <a href="" class="dropdown-item" data-toggle="modal"
+                                                                    data-target="#newThumbModal<?= $product['id']; ?>"
+                                                                    data-popup="tooltip" data-placement="top"
+                                                                    title="Tambah thumb"><i
+                                                                        class=" fas fa-fw fa-plus"></i>
+                                                                    thumb
+                                                                </a>
+                                                                <?php else : ?>
+                                                                <a href="" class="dropdown-item" data-toggle="modal"
+                                                                    data-target="#newThumbModal<?= $product['id']; ?>"
+                                                                    data-popup="tooltip" data-placement="top"
+                                                                    title="Edit thumb"><i
+                                                                        class=" fas fa-fw fa-edit"></i>
+                                                                    edit thumb
+                                                                </a>
+                                                                <a href="<?= base_url('produk/deletethumb/') . $product['id']; ?>"
+                                                                    class="dropdown-item del-btn" data-popup="tooltip"
+                                                                    data-placement="top" title="Hapus thumb"><i
+                                                                        class=" fas fa-fw fa-trash"></i>
+                                                                    hapus thumb
+                                                                </a>
+                                                                <?php endif; ?>
+                                                                <div class="dropdown-divider"></div>
+                                                                <a href="" class="dropdown-item " data-toggle="modal"
+                                                                    data-target="#editProdukModal<?= $product['id'] ?>"
+                                                                    data-popup="tooltip" data-placement="top"
+                                                                    title="Edit Data"><i class=" fas fa-fw fa-edit"></i>
+                                                                    edit</a>
+                                                                <a href="<?= base_url('produk/deleteproduk/') . $product['id'] ?>"
+                                                                    class="dropdown-item fas del-btn"
+                                                                    data-popup="tooltip" data-placement="top"
+                                                                    title="Delete Data"><i
+                                                                        class="fas fa-fw fa-trash-alt"></i>
+                                                                    hapus item</a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <?php $i++ ?>
+                                                <?php endif; ?>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <?php $i++ ?>
+                                <?php endforeach; ?>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -158,9 +186,20 @@
                         <textarea placeholder="Deskripsi Produk" type="textarea" class="form-control" id="product_desc"
                             name="product_desc"></textarea>
                     </div>
+                    <div class="form-group">
+                        <select class="form-control" id="category_id" name="category_id">
+                            <option disabled selected>--pilih kategori--</option>
+                            <option disabled></option>
 
+                            <?php foreach ($categories as $category) : ?>
+                            <option value="<?= $category['id']; ?>"><?= $category['category']; ?></option>
+                            <?php endforeach; ?>
+
+                        </select>
+                    </div>
                     <div class="form-group">
                         <input type="number" class="form-control" id="price" name="price" placeholder="Harga">
+                        <small class="text-muted">Misal: 20000</small>
                     </div>
                     <div class="form-group">
                         <input type="number" class="form-control" id="weight" name="weight" placeholder="Berat (gram)">

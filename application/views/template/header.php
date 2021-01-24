@@ -3,7 +3,15 @@
 
 <?php 
 
-$webInfo    = web_info();
+$webInfo        = web_info();
+$notifications  = $this->database->adminNotification();
+$count = 0;
+
+foreach ($notifications as $notification) {
+    if ($notification['is_seen'] == 0) {
+        $count += 1;
+    }
+}
 
 ?>
 
@@ -12,7 +20,8 @@ $webInfo    = web_info();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title><?= $title; ?> | <?= $webInfo['name']; ?></title>
+    <title><?= ($count) ? "($count)" : '' ?> <?= $title; ?> | <?= $webInfo['name']; ?>
+    </title>
     <meta name="description" content="<?= $webInfo['description']; ?>" />
     <meta name="keywords" content="<?= $webInfo['keyword']; ?>" />
 

@@ -49,7 +49,7 @@
                         </div>
                         <div class="product-review-order">
                             <span>62 Reviews</span>
-                            <span>242 orders</span>
+                            <span>Terjual: <?= $product['sold']; ?></span>
                         </div>
                     </div>
                     <p><?= $product['product_desc']; ?></p>
@@ -81,11 +81,13 @@
                             <a title="Purchase Now" href="" id="click-purchase">Pesan Sekarang</a>
                         </div>
                     </div>
+
                     <div class="pro-details-action-wrap">
                         <div class="pro-details-add-to-cart">
-                            <a title="Add to Cart" href="#">Tambah ke Keranjang</a>
+                            <a title="Add to Cart" id="addToCartProduct">Tambah
+                                ke Keranjang</a>
                         </div>
-                        <div class="pro-details-action">
+                        <div class=" pro-details-action">
                             <a title="Add to Wishlist" href="#"><i class="icon-heart"></i></a>
                         </div>
                     </div>
@@ -207,13 +209,13 @@
             <div class="product-plr-1">
                 <div class="single-product-wrap">
                     <div class="product-img product-img-zoom mb-15">
-                        <a href="product-details.html">
+                        <a href="<?= base_url('katalog/detailproduk/' . $produc['id']); ?>">
                             <img src="<?= base_url('assets/img/product_thumb/small/') . $produc['thumb']; ?>" alt="">
                         </a>
                         <div class="product-action-2 tooltip-style-2">
                             <button title="Wishlist"><i class="icon-heart"></i></button>
                             <button title="Quick View" data-toggle="modal"
-                                data-target="#exampleModal<?= $produc['id']; ?>p"><i
+                                data-target="#exampleModal<?= $produc['id']; ?>"><i
                                     class="icon-size-fullscreen icons"></i></button>
                         </div>
                     </div>
@@ -228,7 +230,9 @@
                             </div>
                             <span>(2)</span>
                         </div>
-                        <h3><a href="product-details.html"><?= $produc['title']; ?></a></h3>
+                        <h3><a
+                                href="<?= base_url('katalog/detailproduk/' . $produc['id']); ?>"><?= $produc['title']; ?></a>
+                        </h3>
                         <div class="product-price-2">
                             <span>RP. <?= number_format($produc['price'], 0, ',', '.'); ?></span>
                         </div>
@@ -308,7 +312,7 @@
                             <div class="pro-details-size">
                                 <span>Berat:</span>
                                 <div class="pro-details-size-content">
-                                    500gram
+                                    <?= ($produc['weight'] >= 1000) ? $produc['weight'] * 0.001 . 'kg' : $produc['weight'] . 'gram'; ?>
                                 </div>
                             </div>
                             <div class="pro-details-quality">
@@ -319,8 +323,7 @@
                             </div>
                             <div class="product-details-meta">
                                 <ul>
-                                    <li><span>Categories:</span> <a href="#">Woman,</a> <a href="#">Dress,</a> <a
-                                            href="#">T-Shirt</a></li>
+                                    <li><span>Kategoti:</span> <?= $produc['category']; ?></li>
                                 </ul>
                             </div>
                             <div class="pro-details-action-wrap">

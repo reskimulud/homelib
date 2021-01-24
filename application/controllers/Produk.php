@@ -16,11 +16,13 @@ class Produk extends CI_Controller
         $data['title']      = 'Katalog Produk';
         $data['user']       = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
         $data['products']   = $this->database->getProduct();
+        $data['categories'] = $this->database->getProductCategory();
 
         $this->form_validation->set_rules('title', 'Nama Produk', 'required|trim');
         $this->form_validation->set_rules('product_desc', 'Deskripsi Produk', 'required');
         $this->form_validation->set_rules('price', 'Harga', 'required|integer');
         $this->form_validation->set_rules('weight', 'Berat', 'required');
+        $this->form_validation->set_rules('category_id', 'Kategori', 'required');
 
         if ($this->form_validation->run() == FALSE) {
 
@@ -38,6 +40,7 @@ class Produk extends CI_Controller
 
             $date_added     = time();
             $added_by       = $data['user']['id'];
+            $category_id    = $this->input->POST('category_id');
 
             $hex            = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
             $color          = $hex[rand(0,15)].$hex[rand(0,15)].$hex[rand(0,15)].$hex[rand(0,15)].$hex[rand(0,15)].$hex[rand(0,15)];
@@ -47,6 +50,7 @@ class Produk extends CI_Controller
                 'product_desc'  => $product_desc,
                 'date_added'    => $date_added,
                 'added_by'      => $added_by,
+                'category_id'   => $category_id,
                 'price'         => $price,
                 'weight'        => $weight,
                 'color'         => $color

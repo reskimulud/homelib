@@ -9,6 +9,7 @@ class Checkout extends CI_Controller
         is_logged_in();
 
         $this->load->model('API_model', 'api');
+        $this->load->model('Notification_model', 'notif');
     }
 
     public function index()
@@ -72,9 +73,6 @@ class Checkout extends CI_Controller
                     $this->load->view('frontend/checkout/index', $data);
                     $this->load->view('frontend/template/footer', $data);
                 } else {
-                    $product = base64_encode($product);
-                    $product = str_replace('=', '_', $product);
-                    $product = urlencode($product);
 
                     redirect('checkout/address/' . $product);
                 }
@@ -109,6 +107,10 @@ class Checkout extends CI_Controller
             // var_dump($address); die;
 
             if ($address) {
+                $product = base64_encode($product);
+                $product = str_replace('=', '_', $product);
+                $product = urlencode($product);
+                
                 $data['addresses']  = $address;
                 $data['encode']     = $product;
 
@@ -240,6 +242,18 @@ class Checkout extends CI_Controller
             $total_fee          = $this->input->POST('total_fee');
             $transactionNumber  =  date('dmy') . $user['id'] . $method_id . $shuffle ;
 
+            if (isset($_POST['idC'])) {
+                $idC    = str_replace('_', '=', $_POST['idC']);
+                $idC    = json_decode(base64_decode(urldecode($idC)), TRUE);
+
+                foreach ($idC as $idCart) {
+                    $this->cart->remove($idCart);
+
+                    $this->db->where('rowid', $idCart);
+                    $this->db->delete('user_cart');
+                }
+            }
+
             $data   = [
                 'transaction_number'    => $transactionNumber,
                 'product'               => $product,
@@ -254,6 +268,26 @@ class Checkout extends CI_Controller
             $result = $this->database->save($data, 'transaction');
 
             if ($result) {
+
+                $target = 'admin';
+                $title  = "#$transactionNumber | Pesanan Baru Dibuat oleh User";
+                $icon   = base_url('favicon.ico');
+                $body   = $user['name'] . ' telah membuat pesanan dengan total harga sebesar Rp. ' . number_format($total_fee, 0, ',', '.');
+                $href   = 'transaksi';
+
+                $this->notif->notification($target, $title, $icon, $body, $href);
+
+                $products = json_decode($product, TRUE);
+
+                foreach ($products as $prod) {
+                    $product = $this->database->getProductById($prod['product_id']);
+
+                    if ($product) {
+                        $this->db->where('id', $product['id']);
+                        $this->db->update('product', ['sold' => $product['sold'] + 1]);
+                    }
+                }
+
                 $this->session->set_flashdata(
                     'message',
                     'Pesanan dibuat dengan Nomer :' . $transactionNumber
@@ -304,90 +338,108 @@ class Checkout extends CI_Controller
         
         if ($transaction && $transaction['user_id'] == $user['id']) {
 
-            $confirmByTransactionNumber = $this->db->get_where('transaction_confirm', ['transaction_number' => $transaction['transaction_number']])->row_array();
+            if ($transaction['status'] != 1) {
+                $this->session->set_flashdata(
+                    'error',
+                    'Transaksi sedang diproses, selesai atau sudah kadaluwarsa'
+                );
+                redirect('user');
+            } else {
 
-            if (!$confirmByTransactionNumber) {
+                $confirmByTransactionNumber = $this->db->get_where('transaction_confirm', ['transaction_number' => $transaction['transaction_number']])->row_array();
+    
+                if (!$confirmByTransactionNumber) {
+    
+                    $data['title']          = 'Konfirmasi Pembayaran';
+                    $data['user']           = $user;
+                    $data['transaction']    = $transaction;
+    
+                    $this->form_validation->set_rules('transaction_number', 'Number Transaksi', 'required');
+    
+                    if ($this->form_validation->run() == FALSE) {
+    
+                        $this->load->view('frontend/template/header', $data);
+                        $this->load->view('frontend/template/navbar', $data);
+                        $this->load->view('frontend/checkout/confirm', $data);
+                        $this->load->view('frontend/template/footer');
+                    } else {
+                        $user               = $this->database->getUser();
+                        $transaction_number = $this->input->POST('transaction_number');
+                        $transaction        = $this->database->getTransactionByNumber($transaction_number);
+    
+                        if ($transaction && $transaction['user_id'] == $user['id']) {
+                            $image  = $_FILES['proof_image']['name'];
+                            
+                            if ($image) {
+    
+                                $config['allowed_types'] = 'png|PNG|jpg|JPG|jpeg|JPEG|bmp|BMP|gif|GIF';
+                                $config['max_size']     = '3080';
+                                $config['upload_path'] = './assets/img/transaction_confirm/';
+    
+                                $this->load->library('upload', $config);
+    
+                                if ($this->upload->do_upload('proof_image')) {
+                                    $new_image      = $this->upload->data();
+                                    $proof_image    = $new_image['file_name'];
+    
+                                    $this->proof_image($proof_image);
+    
+                                } else {
+                                    $this->session->set_flashdata(
+                                        'error',
+                                        $this->upload->display_errors()
+                                    );
+                                    redirect('checkout/confirm/' . $transaction_number);
+                                }
+    
+                                $data   = [
+                                    'transaction_id'        => $transaction['id'],
+                                    'transaction_number'    => $transaction_number,
+                                    'proof_image'           => $proof_image,
+                                    'date_created'          => time()
+                                ];
+    
+                                $this->database->save($data, 'transaction_confirm');
 
-                $data['title']          = 'Konfirmasi Pembayaran';
-                $data['user']           = $user;
-                $data['transaction']    = $transaction;
+                                $target = 'admin';
+                                $title  = "Permintaan konfirmasi pembayaran";
+                                $icon   = base_url('favicon.ico');
+                                $body   = $user['name'] . " telah membuat permintaan untuk mengonfirmasi pesanan #$transaction_number";
+                                $href   = 'transaksi/konfirmasi';
 
-                $this->form_validation->set_rules('transaction_number', 'Number Transaksi', 'required');
-
-                if ($this->form_validation->run() == FALSE) {
-
-                    $this->load->view('frontend/template/header', $data);
-                    $this->load->view('frontend/template/navbar', $data);
-                    $this->load->view('frontend/checkout/confirm', $data);
-                    $this->load->view('frontend/template/footer');
-                } else {
-                    $user               = $this->database->getUser();
-                    $transaction_number = $this->input->POST('transaction_number');
-                    $transaction        = $this->database->getTransactionByNumber($transaction_number);
-
-                    if ($transaction && $transaction['user_id'] == $user['id']) {
-                        $image  = $_FILES['proof_image']['name'];
-                        
-                        if ($image) {
-
-                            $config['allowed_types'] = 'png|PNG|jpg|JPG|jpeg|JPEG|bmp|BMP|gif|GIF';
-                            $config['max_size']     = '3080';
-                            $config['upload_path'] = './assets/img/transaction_confirm/';
-
-                            $this->load->library('upload', $config);
-
-                            if ($this->upload->do_upload('proof_image')) {
-                                $new_image      = $this->upload->data();
-                                $proof_image    = $new_image['file_name'];
-
-                                $this->proof_image($proof_image);
-
+                                $this->notif->notification($target, $title, $icon, $body, $href);
+    
+                                $this->session->set_flashdata(
+                                    'message',
+                                    'Permintaan telah dikirim ke admin dan akan diproses'
+                                );
+                                redirect('user');
+    
                             } else {
                                 $this->session->set_flashdata(
                                     'error',
-                                    $this->upload->display_errors()
+                                    'Tidak ada gabar yang diupload'
                                 );
                                 redirect('checkout/confirm/' . $transaction_number);
                             }
-
-                            $data   = [
-                                'transaction_id'        => $transaction['id'],
-                                'transaction_number'    => $transaction_number,
-                                'proof_image'           => $proof_image,
-                                'date_created'          => time()
-                            ];
-
-                            $this->database->save($data, 'transaction_confirm');
-
-                            $this->session->set_flashdata(
-                                'message',
-                                'Permintaan telah dikirim ke admin dan akan diproses'
-                            );
-                            redirect('user');
-
                         } else {
                             $this->session->set_flashdata(
                                 'error',
-                                'Tidak ada gabar yang diupload'
+                                'No. Transaksi tidak dditemukan'
                             );
-                            redirect('checkout/confirm/' . $transaction_number);
+                            redirect('user');
                         }
-                    } else {
-                        $this->session->set_flashdata(
-                            'error',
-                            'No. Transaksi tidak dditemukan'
-                        );
-                        redirect('user');
                     }
+    
+                } else {
+                    $this->session->set_flashdata(
+                        'error',
+                        'Permintaan sebelumnya telah terkirim'
+                    );
+                    redirect('user');
                 }
-
-            } else {
-                $this->session->set_flashdata(
-                    'error',
-                    'Permintaan sebelumnya telah terkirim'
-                );
-                redirect('user');
             }
+ 
             
         } else {
             $this->session->set_flashdata(

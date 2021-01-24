@@ -75,7 +75,7 @@ var pieData = {
         <?php 
             
         foreach ($products as $product) {
-            $product = $product['title'];
+            $product = substr($product['title'], 0, 20);
             echo "'$product',";
         }
             

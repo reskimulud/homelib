@@ -78,16 +78,16 @@ $(function () {
    * ------------
    * Create a world map with markers
    */
-  $('#world-map-markers').mapael({
-    map: {
-      name: "usa_states",
-      zoom: {
-        enabled: true,
-        maxLevel: 10
-      },
-    },
-  }
-  );
+  // $('#world-map-markers').mapael({
+  //   map: {
+  //     name: "usa_states",
+  //     zoom: {
+  //       enabled: true,
+  //       maxLevel: 10
+  //     },
+  //   },
+  // }
+  // );
 
   // $('#world-map-markers').vectorMap({
   //   map              : 'world_en',

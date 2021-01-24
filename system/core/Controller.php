@@ -94,6 +94,7 @@ class CI_Controller {
 				$this->database->update(['status' => 0], $noTran['id'], 'transaction');
 			}
 		}
+
 	}
 
 	// --------------------------------------------------------------------
