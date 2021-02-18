@@ -2,9 +2,7 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 class Transaksi extends CI_Controller
-
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -37,7 +35,6 @@ class Transaksi extends CI_Controller
             );
             redirect('transaksi');
         } else {
-
             if ($value < 1 || $value > 3) {
                 $this->session->set_flashdata(
                     'error',
@@ -56,13 +53,11 @@ class Transaksi extends CI_Controller
                             $result = $this->buaatInvoice($transaction['transaction_number'], $transaction['id'], $transaction['user_id']);
                             
                             if ($result) {
-
                                 $this->session->set_flashdata(
                                     'toast',
                                     "Invoice ditambahkan dengan No. Invoice : #$invoice_number"
                                 );
                             }
-
                         }
 
                         $this->session->set_flashdata(
@@ -73,7 +68,6 @@ class Transaksi extends CI_Controller
                     }
                 }
             }
-
         }
     }
 
@@ -137,7 +131,6 @@ class Transaksi extends CI_Controller
             $this->load->view('template/topbar', $data);
             $this->load->view('backend/transaction/detail_invoice', $data);
             $this->load->view('template/footer');
-
         } else {
             $this->session->set_flashdata(
                 'error',
@@ -145,8 +138,6 @@ class Transaksi extends CI_Controller
             );
             redirect('transaksi/invoice');
         }
-
-        
     }
 
     public function print_invoice($id)
@@ -160,7 +151,6 @@ class Transaksi extends CI_Controller
             $data['products']   = json_decode($detailInvoice['product']);
             
             $this->load->view('backend/transaction/print_invoice', $data);
-
         } else {
             $this->session->set_flashdata(
                 'error',
@@ -168,8 +158,6 @@ class Transaksi extends CI_Controller
             );
             redirect('transaksi/invoice');
         }
-
-        
     }
 
     public function deleteinvoice($id)
@@ -195,7 +183,7 @@ class Transaksi extends CI_Controller
     {
         $data['title']      = 'Konfirmasi Pembayaran';
         $data['user']       = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-        $data['confirms']   = $this->db->get('transaction_confirm')->result_array();
+        $data['confirms']   = $this->database->getDetailConfirm();
 
         $this->load->view('template/header', $data);
         $this->load->view('template/sidebar', $data);
@@ -215,16 +203,16 @@ class Transaksi extends CI_Controller
 
             $invoice = $this->buaatInvoice($transaction['transaction_number'], $transaction['id'], $transaction['user_id']);
 
-            $products = json_decode($transaction['product'], TRUE);
+            $products = json_decode($transaction['product'], true);
 
-                foreach ($products as $prod) {
-                    $product = $this->database->getProductById($prod['product_id']);
+            foreach ($products as $prod) {
+                $product = $this->database->getProductById($prod['product_id']);
 
-                    if ($product) {
-                        $this->db->where('id', $product['id']);
-                        $this->db->update('product', ['sold' => $product['sold'] + 1]);
-                    }
+                if ($product) {
+                    $this->db->where('id', $product['id']);
+                    $this->db->update('product', ['sold' => $product['sold'] + 1]);
                 }
+            }
 
             $target = $transaction['user_id'];
             $title  = 'Pesanan sedang diproses';
@@ -255,5 +243,4 @@ class Transaksi extends CI_Controller
             redirect('transaksi/konfirmasi');
         }
     }
-
 }

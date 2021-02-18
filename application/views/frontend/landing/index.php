@@ -113,10 +113,22 @@
                                     <div class="product-price-2">
                                         <span>Rp. <?= number_format($product['price'], 0, ',', '.'); ?></span>
                                     </div>
+
+                                    <?php if ($this->session->userdata('email')) : ?>
                                     <div class="pro-add-to-cart">
                                         <button title="Add to Cart" onclick="addToCart(<?= $product['id']; ?>)">Tambah
                                             ke Keranjang</button>
                                     </div>
+
+                                    <?php else : ?>
+                                    <div class="pro-add-to-cart">
+                                        <a href="<?= base_url('user/cart'); ?>">
+                                            <button title="Add to Cart">Tambah ke Keranjang</button>
+                                        </a>
+                                    </div>
+                                    <?php endif; ?>
+
+
                                 </div>
                             </div>
                         </div>
@@ -248,10 +260,21 @@
                                         <div class="product-price-2">
                                             <span>Rp. <?= number_format($product['price'], 0, ',', '.'); ?></span>
                                         </div>
+
+                                        <?php if ($this->session->userdata('email')) : ?>
                                         <div class="pro-add-to-cart">
                                             <button title="Add to Cart"
                                                 onclick="addToCart(<?= $product['id']; ?>)">Tambah ke Keranjang</button>
                                         </div>
+
+                                        <?php else : ?>
+                                        <div class="pro-add-to-cart">
+                                            <a href="<?= base_url('user/cart'); ?>">
+                                                <button title="Add to Cart">Tambah ke Keranjang</button>
+                                            </a>
+                                        </div>
+                                        <?php endif; ?>
+
                                     </div>
                                 </div>
                             </div>

@@ -88,7 +88,8 @@
                                 ke Keranjang</a>
                         </div>
                         <div class=" pro-details-action">
-                            <a title="Add to Wishlist" href="#"><i class="icon-heart"></i></a>
+                            <a title="Add to Wishlist" onclick="addWishlist(<?= $product['id']; ?>)"><i
+                                    class="icon-heart red"></i></a>
                         </div>
                     </div>
                 </div>
@@ -214,9 +215,6 @@
                         </a>
                         <div class="product-action-2 tooltip-style-2">
                             <button title="Wishlist"><i class="icon-heart"></i></button>
-                            <button title="Quick View" data-toggle="modal"
-                                data-target="#exampleModal<?= $produc['id']; ?>"><i
-                                    class="icon-size-fullscreen icons"></i></button>
                         </div>
                     </div>
                     <div class="product-content-wrap-2 text-center">
@@ -248,7 +246,8 @@
                             </div>
                             <span>(2)</span>
                         </div>
-                        <h3><a href="product-details.html"><?= $produc['title']; ?></a></h3>
+                        <h3><a href="<?= base_url('katalog/detail/' . $produc['id']); ?>"><?= $produc['title']; ?></a>
+                        </h3>
                         <div class="product-price-2">
                             <span>RP. <?= number_format($produc['price'], 0, ',', '.'); ?></span>
                         </div>
@@ -263,83 +262,3 @@
         </div>
     </div>
 </div>
-
-<?php foreach ($products as $produc) : ?>
-<!-- Modal -->
-<div class="modal fade" id="exampleModal<?= $produc['id']; ?>" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">x</span></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-lg-5 col-md-6 col-12 col-sm-12">
-                        <div class="tab-content quickview-big-img">
-                            <div id="pro-1" class="tab-pane fade show active">
-                                <img src="<?= base_url('assets/img/product_thumb/small/') . $produc['thumb']; ?>"
-                                    alt="">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-7 col-md-6 col-12 col-sm-12">
-                        <div class="product-details-content quickview-content">
-                            <h2><?= $produc['title']; ?></h2>
-                            <div class="product-ratting-review-wrap">
-                                <div class="product-ratting-digit-wrap">
-                                    <div class="product-ratting">
-                                        <i class="icon_star"></i>
-                                        <i class="icon_star"></i>
-                                        <i class="icon_star"></i>
-                                        <i class="icon_star"></i>
-                                        <i class="icon_star"></i>
-                                    </div>
-                                    <div class="product-digit">
-                                        <span>5.0</span>
-                                    </div>
-                                </div>
-                                <div class="product-review-order">
-                                    <span>62 Reviews</span>
-                                    <span>242 orders</span>
-                                </div>
-                            </div>
-                            <p><?= $produc['product_desc']; ?></p>
-                            <div class="pro-details-price">
-                                <span class="new-price">Rp. <?= number_format($produc['price'], 0, ',', '.'); ?></span>
-                                <!-- <span class="old-price">$95.72</span> -->
-                            </div>
-                            <div class="pro-details-size">
-                                <span>Berat:</span>
-                                <div class="pro-details-size-content">
-                                    <?= ($produc['weight'] >= 1000) ? $produc['weight'] * 0.001 . 'kg' : $produc['weight'] . 'gram'; ?>
-                                </div>
-                            </div>
-                            <div class="pro-details-quality">
-                                <span>Quantity:</span>
-                                <div class="cart-plus-minus">
-                                    <input class="cart-plus-minus-box" type="text" name="qtybutton" value="1">
-                                </div>
-                            </div>
-                            <div class="product-details-meta">
-                                <ul>
-                                    <li><span>Kategoti:</span> <?= $produc['category']; ?></li>
-                                </ul>
-                            </div>
-                            <div class="pro-details-action-wrap">
-                                <div class="pro-details-add-to-cart">
-                                    <a title="Add to Cart" href="#">Tambah ke Keranjang</a>
-                                </div>
-                                <div class="pro-details-action">
-                                    <a title="Add to Wishlist" href="#"><i class="icon-heart"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<?php endforeach; ?>
-<!-- Modal end -->

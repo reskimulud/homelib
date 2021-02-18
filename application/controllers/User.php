@@ -267,17 +267,6 @@ class User extends CI_Controller
         }
     }
 
-    public function wishlist()
-    {
-        $data['title']  = 'Wishlist';
-        $data['user']   = $this->database->getUser();
-
-        $this->load->view('frontend/template/header', $data);
-        $this->load->view('frontend/template/navbar', $data);
-        $this->load->view('frontend/user/wishlist', $data);
-        $this->load->view('frontend/template/footer');
-    }
-
     public function cart()
     {
         $data['title']  = 'Keranjang Belanja';
@@ -337,6 +326,31 @@ class User extends CI_Controller
                 redirect('user/cart');
             }
         }
+    }
+
+    public function wishlist()
+    {
+        $data['title']      = 'Wishlist';
+        $data['user']       = $this->database->getUser();
+        $data['wishlists']  = $this->database->getUserWishlist();
+
+        $this->load->view('frontend/template/header', $data);
+        $this->load->view('frontend/template/navbar', $data);
+        $this->load->view('frontend/user/wishlist', $data);
+        $this->load->view('frontend/template/footer');
+    }
+
+    public function addWishlist()
+    {
+        $user       = $this->database->getUser();
+        $userID     = $user['id'];
+        $product_id = $this->input->POST('productID');
+        $wishlists  = $this->db->query("SELECT * FROM `user_wishlist` WHERE `user_id` = $userID AND `product_id` = $product_id")->result_array();
+
+        if (!$wishlists) {
+            $this->database->save(['user_id' => $user['id'], 'product_id' => $product_id], 'user_wishlist');
+        }
+
     }
 
     public function notification()

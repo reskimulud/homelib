@@ -26,7 +26,8 @@
             <div class="col-lg-6 col-md-6">
                 <div class="contact-info-wrap">
                     <div class="footer-logo">
-                        <a href="#"><img src="<?= base_url('assets/'); ?>images/logo/logo.png" alt="logo"></a>
+                        <a href="#"><img src="<?= base_url('assets/'); ?>images/logo/logo.png" alt="logo"
+                                height="60px"></a>
                     </div>
                     <div class="single-contact-info">
                         <span>24/7 dapat dihubungi:</span>
@@ -53,7 +54,8 @@
                         <a href="<?= $webInfo['instagram']; ?>"><i class="social_instagram"></i></a>
                     </div>
                     <div class="copyright">
-                        <p>Copyright © 2020 <?= $webInfo['name']; ?> | <a href="https://hasthemes.com/">Built with
+                        <p>Copyright © <?= (date('Y') > '2020') ? '2020-' . date('Y') : '2020'; ?>
+                            <?= $webInfo['name']; ?> | <a href="https://hasthemes.com/">Built with
                                 <span>Norda</span> by HasThemes</a>.</p>
                     </div>
                 </div>
@@ -200,10 +202,24 @@ $('#addToCartProduct').on('click', function(e) {
     const productID = $('#product-id').val();
     const qtyCart = $('#qtybutton').val();
 
+    console.log(productID, qtyCart);
+
     addToCart(productID, qtyCart);
 
-    e.product_id();
+    e.preventDefault();
 });
+
+function addWishlist(product_id) {
+    toastr.success("Produk ditambahkan ke daftar keinginan");
+
+    $.ajax({
+        url: "<?= base_url('user/addWishlist'); ?>",
+        type: 'post',
+        data: {
+            productID: product_id
+        }
+    });
+}
 
 
 function img() {

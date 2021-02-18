@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 24, 2021 at 11:47 AM
+-- Generation Time: Feb 11, 2021 at 05:16 AM
 -- Server version: 10.3.15-MariaDB
 -- PHP Version: 7.3.6
 
@@ -61,7 +61,7 @@ INSERT INTO `notification` (`id`, `target`, `title`, `icon`, `body`, `href`, `is
 (17, 'admin', '#24012111Q9IKAR | Pesanan Baru Dibuat oleh User', 'http://localhost/homelib/favicon.ico', 'Administrator Homelib telah membuat pesanan dengan total harga sebesar Rp. 145.000', 'transaksi', 0, 1611481268),
 (18, 'admin', '#24012111PVZODR | Pesanan Baru Dibuat oleh User', 'http://localhost/homelib/favicon.ico', 'Administrator Homelib telah membuat pesanan dengan total harga sebesar Rp. 145.000', 'transaksi', 0, 1611483951),
 (19, 'admin', 'Permintaan konfirmasi pembayaran', 'http://localhost/homelib/favicon.ico', 'Administrator Homelib telah membuat permintaan untuk mengonfirmasi pesanan #2401211171G6UF', 'transaksi/konfirmasi', 1, 1611484399),
-(20, '1', 'Pesanan sedang diproses', 'http://localhost/homelib/favicon.ico', 'Permintaan anda untuk pesanan #2401211171G6UF telah dikonfirmasi dan sedang diproses', 'user/notification', 0, 1611484416);
+(20, '1', 'Pesanan sedang diproses', 'http://localhost/homelib/favicon.ico', 'Permintaan anda untuk pesanan #2401211171G6UF telah dikonfirmasi dan sedang diproses', 'user/notification', 1, 1611484416);
 
 -- --------------------------------------------------------
 
@@ -81,24 +81,25 @@ CREATE TABLE `product` (
   `weight` int(32) NOT NULL,
   `color` varchar(6) NOT NULL,
   `sold` int(11) NOT NULL DEFAULT 0,
-  `add_to_cart` int(11) NOT NULL DEFAULT 0
+  `add_to_cart` int(11) NOT NULL DEFAULT 0,
+  `loved` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`id`, `title`, `product_desc`, `thumb`, `date_added`, `added_by`, `category_id`, `price`, `weight`, `color`, `sold`, `add_to_cart`) VALUES
-(1, 'The Magic Of Adobe Illustrator', 'Buku The Magic Of Adobe Illustrator', 'Reseweb-The_Magic_Of_Adobe_Illustrator-01.png', 1609402255, 1, 1, 280000, 900, 'FF4A2E', 0, 0),
-(2, 'Aplikasi Arduino dan Sensor', 'Buku Aplikasi Arduino dan Sensor ini asdja;alsjf asfasflashlakshf \'poa\'aisfa\'iqghqq oasfiqy\'pqfhafpo', 'Reseweb-Aplikasi_Arduino_dan_Sensor-01.png', 1610386560, 1, 1, 135000, 750, 'F88129', 0, 0),
-(4, 'Ruby Untuk Aplikasi Dekstop dan Web', 'Buku Ruby Untuk Aplikasi Dekstop dan Web', 'Reseweb-Ruby_Untuk_Aplikasi_Dekstop_dan_Web-01.png', 1609910452, 1, 1, 109000, 800, 'EB9100', 0, 0),
-(5, 'The Magic Of CorelDraw 60 Total Tutorial Edisi Revisi ke 3', 'Buku The Magic Of CorelDraw 60 Total Tutorial Edisi Revisi ke 3', 'Reseweb-The_Magic_Of_CorelDraw_60_Total_Tutorial_Edisi_Revisi_ke_3-01.png', 1609910509, 1, 1, 208000, 800, '00ABD6', 1, 0),
-(6, 'Mudah Belajar Visual Basic.Net Disertai Lebih dari 300 Contoh Program +CD', 'Buku Mudah Belajar Visual Basic.Net Disertai Lebih dari 300 Contoh Program +CD', 'Reseweb-Mudah_Belajar_Visual_Basic_Net_Disertai_Lebih_dari_300_Contoh_Program_+CD-01.png', 1609910900, 1, 1, 176000, 890, '1988C8', 0, 0),
-(7, 'Deep learning Modernisasi Machine Learning Untuk Big Data', 'Buku Deep learning Modernisasi Machine Learning Untuk Big Data cocok bagi anda yang ingin belajar tentang deep learning', 'Reseweb-Deep_learning_Modernisasi_Machine_Learning_Untuk_Big_Data-01.png', 1609911020, 1, 1, 83000, 600, '1EA59A', 0, 0),
-(8, 'Graphic Design', 'Buku pembelajaran dalam graphic design', 'Reseweb-Computer_Graphic_Design_Revisi_ke_3-01.png', 1609911082, 1, 1, 208000, 1100, '007BFF', 1, 0),
-(10, 'Algoritma Pemrograman Menggunakan Bahasa Pascal dan C++', 'Buku Algoritma dan Pemrograman dalam Bahasa Pascal, C, dan C++ merupakan edisi baru dari buku sebelumnya, yaitu Algoritma dan Pemrograman dalam Bahasa Pascal dan C. Buku ini disusun bagi siapapun (siswa, mahasiswa, umum) yang ingin mempelajari bidang pemr', 'Reseweb-Algoritma_dan_Pemrograman_dalam_Bahasa_Pascal_C_dan_C++-01.png', 1610386764, 1, 1, 135000, 700, '91F804', 2, 1),
-(11, 'Aplikasi Smart Report +DVD', 'Buku Aplikasi Smart Report +DVD', 'Reseweb-Aplikasi_Smart_Report_+DVD-01.png', 1610710919, 1, 1, 145000, 800, '701034', 1, 0),
-(12, 'Seni Interaksi Rasulullah', 'Buku Seni Interaksi Rasulullah', 'photo_2021-01-08_19-45-51.jpg', 1611397848, 1, 2, 139000, 1000, '856DE4', 0, 0);
+INSERT INTO `product` (`id`, `title`, `product_desc`, `thumb`, `date_added`, `added_by`, `category_id`, `price`, `weight`, `color`, `sold`, `add_to_cart`, `loved`) VALUES
+(1, 'The Magic Of Adobe Illustrator', 'Buku The Magic Of Adobe Illustrator', 'Reseweb-The_Magic_Of_Adobe_Illustrator-01.png', 1609402255, 1, 1, 280000, 900, 'FF4A2E', 0, 0, 0),
+(2, 'Aplikasi Arduino dan Sensor', 'Buku Aplikasi Arduino dan Sensor ini asdja;alsjf asfasflashlakshf \'poa\'aisfa\'iqghqq oasfiqy\'pqfhafpo', 'Reseweb-Aplikasi_Arduino_dan_Sensor-01.png', 1610386560, 1, 1, 135000, 750, 'F88129', 0, 1, 0),
+(4, 'Ruby Untuk Aplikasi Dekstop dan Web', 'Buku Ruby Untuk Aplikasi Dekstop dan Web', 'Reseweb-Ruby_Untuk_Aplikasi_Dekstop_dan_Web-01.png', 1609910452, 1, 1, 109000, 800, 'EB9100', 0, 0, 0),
+(5, 'The Magic Of CorelDraw 60 Total Tutorial Edisi Revisi ke 3', 'Buku The Magic Of CorelDraw 60 Total Tutorial Edisi Revisi ke 3', 'Reseweb-The_Magic_Of_CorelDraw_60_Total_Tutorial_Edisi_Revisi_ke_3-01.png', 1609910509, 1, 1, 208000, 800, '00ABD6', 1, 0, 0),
+(6, 'Mudah Belajar Visual Basic.Net Disertai Lebih dari 300 Contoh Program +CD', 'Buku Mudah Belajar Visual Basic.Net Disertai Lebih dari 300 Contoh Program +CD', 'Reseweb-Mudah_Belajar_Visual_Basic_Net_Disertai_Lebih_dari_300_Contoh_Program_+CD-01.png', 1609910900, 1, 1, 176000, 890, '1988C8', 0, 0, 0),
+(7, 'Deep learning Modernisasi Machine Learning Untuk Big Data', 'Buku Deep learning Modernisasi Machine Learning Untuk Big Data cocok bagi anda yang ingin belajar tentang deep learning', 'Reseweb-Deep_learning_Modernisasi_Machine_Learning_Untuk_Big_Data-01.png', 1609911020, 1, 1, 83000, 600, '1EA59A', 0, 0, 0),
+(8, 'Graphic Design', 'Buku pembelajaran dalam graphic design', 'Reseweb-Computer_Graphic_Design_Revisi_ke_3-01.png', 1609911082, 1, 1, 208000, 1100, '007BFF', 1, 0, 0),
+(10, 'Algoritma Pemrograman Menggunakan Bahasa Pascal dan C++', 'Buku Algoritma dan Pemrograman dalam Bahasa Pascal, C, dan C++ merupakan edisi baru dari buku sebelumnya, yaitu Algoritma dan Pemrograman dalam Bahasa Pascal dan C. Buku ini disusun bagi siapapun (siswa, mahasiswa, umum) yang ingin mempelajari bidang pemr', 'Reseweb-Algoritma_dan_Pemrograman_dalam_Bahasa_Pascal_C_dan_C++-01.png', 1610386764, 1, 1, 135000, 700, '91F804', 2, 3, 0),
+(11, 'Aplikasi Smart Report +DVD', 'Buku Aplikasi Smart Report +DVD', 'Reseweb-Aplikasi_Smart_Report_+DVD-01.png', 1610710919, 1, 1, 145000, 800, '701034', 1, 0, 0),
+(12, 'Seni Interaksi Rasulullah', 'Buku Seni Interaksi Rasulullah', 'photo_2021-01-08_19-45-51.jpg', 1611397848, 1, 2, 139000, 1000, '856DE4', 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -188,14 +189,14 @@ INSERT INTO `transaction` (`id`, `transaction_number`, `product`, `user_id`, `da
 (9, '22012111Y1BOTP', '[{\"product_id\":4,\"qty\":1}]', 1, 1611324947, 0, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 1, 119000),
 (10, '23012114SPE2K9', '[{\"product_id\":6,\"qty\":2}]', 1, 1611380896, 0, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 4, 372000),
 (11, '23012113EDSPLC', '[{\"product_id\":12,\"qty\":1}]', 1, 1611398128, 0, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 3, 149000),
-(12, '2401211416L0SX', '[{\"product_id\":\"11\",\"qty\":\"1\"},{\"product_id\":\"10\",\"qty\":\"2\"}]', 1, 1611463447, 1, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 4, 435000),
-(13, '24012111JLF4QI', '[{\"product_id\":12,\"qty\":1}]', 1, 1611466870, 1, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 1, 149000),
-(14, '24012111R7X15F', '[{\"product_id\":\"10\",\"qty\":\"1\"},{\"product_id\":\"11\",\"qty\":\"1\"}]', 1, 1611467268, 1, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 1, 300000),
-(15, '2401211171G6UF', '[{\"product_id\":\"10\",\"qty\":\"1\"},{\"product_id\":\"11\",\"qty\":\"1\"},{\"product_id\":\"8\",\"qty\":\"1\"},{\"product_id\":\"5\",\"qty\":\"1\"}]', 1, 1611476423, 2, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 1, 736000),
-(16, '2401211413FOLR', '[{\"product_id\":\"10\",\"qty\":\"1\"},{\"product_id\":\"11\",\"qty\":\"1\"},{\"product_id\":\"8\",\"qty\":\"1\"},{\"product_id\":\"5\",\"qty\":\"1\"},{\"product_id\":\"12\",\"qty\":\"1\"}]', 1, 1611476727, 2, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 4, 885000),
-(17, '2401212435SNCX', '[{\"product_id\":\"11\",\"qty\":\"1\"},{\"product_id\":\"10\",\"qty\":\"1\"},{\"product_id\":\"8\",\"qty\":\"1\"}]', 2, 1611480924, 1, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 4, 518000),
-(18, '24012111Q9IKAR', '[{\"product_id\":\"10\",\"qty\":\"1\"}]', 1, 1611481268, 1, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 1, 145000),
-(19, '24012111PVZODR', '[{\"product_id\":10,\"qty\":1}]', 1, 1611483951, 1, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 1, 145000);
+(12, '2401211416L0SX', '[{\"product_id\":\"11\",\"qty\":\"1\"},{\"product_id\":\"10\",\"qty\":\"2\"}]', 1, 1611463447, 0, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 4, 435000),
+(13, '24012111JLF4QI', '[{\"product_id\":12,\"qty\":1}]', 1, 1611466870, 0, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 1, 149000),
+(14, '24012111R7X15F', '[{\"product_id\":\"10\",\"qty\":\"1\"},{\"product_id\":\"11\",\"qty\":\"1\"}]', 1, 1611467268, 0, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 1, 300000),
+(15, '2401211171G6UF', '[{\"product_id\":\"10\",\"qty\":\"1\"},{\"product_id\":\"11\",\"qty\":\"1\"},{\"product_id\":\"8\",\"qty\":\"1\"},{\"product_id\":\"5\",\"qty\":\"1\"}]', 1, 1611476423, 0, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 1, 736000),
+(16, '2401211413FOLR', '[{\"product_id\":\"10\",\"qty\":\"1\"},{\"product_id\":\"11\",\"qty\":\"1\"},{\"product_id\":\"8\",\"qty\":\"1\"},{\"product_id\":\"5\",\"qty\":\"1\"},{\"product_id\":\"12\",\"qty\":\"1\"}]', 1, 1611476727, 0, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 4, 885000),
+(17, '2401212435SNCX', '[{\"product_id\":\"11\",\"qty\":\"1\"},{\"product_id\":\"10\",\"qty\":\"1\"},{\"product_id\":\"8\",\"qty\":\"1\"}]', 2, 1611480924, 0, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 4, 518000),
+(18, '24012111Q9IKAR', '[{\"product_id\":\"10\",\"qty\":\"1\"}]', 1, 1611481268, 0, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 1, 145000),
+(19, '24012111PVZODR', '[{\"product_id\":10,\"qty\":1}]', 1, 1611483951, 0, '\r\n                                        Kp. Selajambu RT 04/01KebonpedesKabupaten Sukabumi,\r\n                                            Jawa Barat43194                                    ', 1, 145000);
 
 -- --------------------------------------------------------
 
@@ -395,8 +396,9 @@ CREATE TABLE `user_cart` (
 --
 
 INSERT INTO `user_cart` (`id`, `user_id`, `product_id`, `qty`, `price`, `name`, `rowid`, `subtotal`) VALUES
-('10-and-1', 1, 10, 2, 135000, 10, 'be5c0bd52f8f34cbd9e7d6880877a7bf', 135000),
-('11-and-1', 1, 11, 1, 145000, 11, '07cd5d2f0e8cb4780c781dad9035442c', 145000);
+('11-and-1', 1, 11, 1, 145000, 11, '07cd5d2f0e8cb4780c781dad9035442c', 145000),
+('10-and-1', 1, 10, 3, 135000, 10, 'be5c0bd52f8f34cbd9e7d6880877a7bf', 135000),
+('12-and-1', 1, 12, 1, 139000, 12, '3685505597a33d4e70496feea84403bd', 139000);
 
 -- --------------------------------------------------------
 
@@ -483,6 +485,29 @@ INSERT INTO `user_sub_menu` (`id`, `title`, `menu_id`, `url`, `icon`, `is_show`)
 (14, 'Metode Pembayaran', 4, 'produk/pembayaran', 'fas fa-fw fa-credit-card', 1),
 (16, 'Konfirmasi Pembayaran', 6, 'transaksi/konfirmasi', 'fas fa-fw fa-clipboard-check', 1),
 (17, 'Notifikasi', 1, 'admin/notifikasi', 'fas fa-fw fa-bell', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_wishlist`
+--
+
+CREATE TABLE `user_wishlist` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `user_wishlist`
+--
+
+INSERT INTO `user_wishlist` (`id`, `user_id`, `product_id`) VALUES
+(1, 1, 10),
+(2, 1, 8),
+(3, 2, 11),
+(4, 1, 12),
+(5, 2, 7);
 
 -- --------------------------------------------------------
 
@@ -646,6 +671,12 @@ ALTER TABLE `user_sub_menu`
   ADD KEY `menu_id` (`menu_id`);
 
 --
+-- Indexes for table `user_wishlist`
+--
+ALTER TABLE `user_wishlist`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `web_config_detail`
 --
 ALTER TABLE `web_config_detail`
@@ -750,6 +781,12 @@ ALTER TABLE `user_role`
 --
 ALTER TABLE `user_sub_menu`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT for table `user_wishlist`
+--
+ALTER TABLE `user_wishlist`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `web_config_detail`

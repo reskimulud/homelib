@@ -236,6 +236,17 @@ class Database_model extends CI_Model
         return $this->db->query($query)->row_array();
     }
 
+    public function getDetailConfirm()
+    {
+        $query      = "SELECT `transaction_confirm`.*, `transaction`.`user_id`,`transaction`.`method_id`, `transaction`.`total_fee`, `user`.`name`, `product_payment_method`.`icon`, `product_payment_method`.`number`
+                         FROM `transaction_confirm` JOIN `transaction` JOIN `user` JOIN `product_payment_method`
+                           ON `transaction_confirm`.`transaction_id`    = `transaction`.`id`
+                          AND `transaction`.`user_id`                   = `user`.`id`
+                          AND  `transaction`.`method_id`                = `product_payment_method`.`id`
+                        ";
+        return $this->db->query($query)->result_array();
+    }
+
     public function userNotification()
     {
         $user = $this->getUser();
@@ -263,5 +274,27 @@ class Database_model extends CI_Model
         }
 
         return $products;
+    }
+
+    public function getUserWishlist()
+    {
+        $user   = $this->getUser();
+        $id     = $user['id'];
+
+        $query  = " SELECT `user_wishlist`.*, `user`.`name`, `product`.`title`, `product`.`thumb`, `product`.`price`
+                      FROM `user_wishlist` JOIN `user` JOIN `product`
+                        ON `user_wishlist`.`product_id` = `product`.`id`
+                       AND `user_wishlist`.`user_id`    = `user`.`id`
+                     WHERE `user_wishlist`.`user_id`    = $id
+                  ORDER BY `user_wishlist`.`id` DESC
+
+        ";
+
+        if ($this->session->userdata('email')) {
+            return $this->db->query($query)->result_array();
+        } else {
+            return NULL;
+        }
+
     }
 }

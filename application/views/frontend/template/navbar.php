@@ -3,6 +3,7 @@
     
     $webInfo = web_info(); 
     $notifications = $this->database->userNotification();
+    $wishlist = $this->database->getUserWishlist();
 
     $count = 0;
 
@@ -53,7 +54,8 @@
                             <div class="col-xl-3 col-lg-2">
                                 <div class="logo">
                                     <a href="<?= base_url(); ?>"><img
-                                            src="<?= base_url('assets/'); ?>images/logo/logo.png" alt="logo"></a>
+                                            src="<?= base_url('assets/'); ?>images/logo/logo.png" alt="logo"
+                                            height="60px"></a>
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-7">
@@ -134,8 +136,12 @@
                                         </div>
                                     </div>
                                     <div class="same-style-2 same-style-2-font-inc">
-                                        <a href="<?= base_url('user/wishlist'); ?>"><i class="icon-heart"></i><span
-                                                class="pro-count black">03</span></a>
+                                        <a href="<?= base_url('user/wishlist'); ?>"><i class="icon-heart"></i>
+                                            <?php if (count($wishlist) > 0) : ?>
+                                            <span class="pro-count black count-wishlist"
+                                                id="count-wishlist"><?= count($wishlist); ?></span>
+                                            <?php endif; ?>
+                                        </a>
                                     </div>
                                     <div class="same-style-2 same-style-2-font-inc header-cart">
                                         <a class="cart-active" href="#">
@@ -162,7 +168,7 @@
                     <div class="col-5">
                         <div class="mobile-logo">
                             <a href="<?= base_url(); ?>">
-                                <img alt="" src="<?= base_url('assets/'); ?>images/logo/logo.png">
+                                <img alt="" src="<?= base_url('assets/'); ?>images/logo/logo.png" height="60px">
                             </a>
                         </div>
                     </div>
@@ -211,8 +217,11 @@
                                 </div>
                             </div>
                             <div class="same-style-2 same-style-2-font-inc">
-                                <a href="<?= base_url('user/wishlist'); ?>"><i class="icon-heart"></i><span
-                                        class="pro-count black">03</span></a>
+                                <a href="<?= base_url('user/wishlist'); ?>"><i class="icon-heart"></i>
+                                    <?php if (count($wishlist) > 0) : ?>
+                                    <span class="pro-count black count-wishlist"><?= count($wishlist); ?></span>
+                                    <?php endif; ?>
+                                </a>
                             </div>
                             <div class="same-style-2 same-style-2-font-inc header-cart">
                                 <a class="cart-active" href="#">

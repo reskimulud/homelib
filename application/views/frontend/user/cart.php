@@ -45,11 +45,23 @@
                                 $productJSON = [];
                                 $idCart = [];
                                 $i = 0;
+                                $productCategory    = $this->database->getProductCategory();
+                                $categoryNum = 0;
                                 
                                 ?>
 
+                                <?php foreach ($productCategory as $key => $category) : ?>
+
+                                <?php if ($key <= $categoryNum) : ?>
+                                <tr align="left">
+                                    <td colspan="6" class="mt-3"><?= $category['category']; ?></td>
+                                </tr>
+                                <?php endif; ?>
+
+
                                 <?php if (is_array($products) && count($products) > 0) : ?>
                                 <?php foreach ($products as $key => $product) : ?>
+                                <?php if ($product['category_id'] == $category['id']) : ?>
                                 <tr>
                                     <td class="product-thumbnail">
                                         <a href="<?= base_url('katalog/detailproduk/' . $product['id']); ?>"><img
@@ -68,17 +80,18 @@
                                         </div>
                                     </td>
                                     <td class="product-subtotal">Rp.
-                                        <?= number_format($product['cart']['subtotal'], 0, ',', '.'); ?>
+                                        <?= number_format(($product['cart']['subtotal'] * $product['cart']['qty']), 0, ',', '.'); ?>
                                     </td>
                                     <td class="product-remove">
                                         <a href="<?= base_url('user/deleteCart/' . $product['cart']['rowid']); ?>"><i
                                                 class="icon_close"></i></a>
                                     </td>
                                 </tr>
+                                <?php if ($category) {$categoryNum++;} ?>
                                 <?php 
 
-                                $total += $product['cart']['subtotal'];
                                 $qty    = $product['cart']['qty'];
+                                $total += $product['cart']['subtotal'] * $qty;
                                 $productJSON[$i]['product_id']  = $product['id'];
                                 $productJSON[$i]['qty']         = "$qty";
 
@@ -86,12 +99,16 @@
                                 
                                 $i++;
                                 ?>
+                                <?php else  : NULL; ?>
+                                <?php endif; ?>
                                 <?php endforeach; ?>
                                 <?php else : ?>
                                 <tr>
                                     <td colspan="6" align="center">Belum ada buku yang ditambahkan</td>
                                 </tr>
                                 <?php endif; ?>
+
+                                <?php endforeach; ?>
 
                             </tbody>
                         </table>
